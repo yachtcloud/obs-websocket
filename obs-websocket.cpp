@@ -21,6 +21,7 @@ with this program. If not, see <https://www.gnu.org/licenses/>
 #include <QAction>
 #include <QMainWindow>
 #include <QTimer>
+#include <inttypes.h>
 
 #include "obs-websocket.h"
 #include "WSServer.h"
@@ -44,6 +45,13 @@ bool obs_module_load(void) {
 
     WSServer::Instance = new WSServer();
     WSEvents::Instance = new WSEvents(WSServer::Instance);
+
+    uint64_t port = obs_frontend_get_opt_websocket_port();
+
+    if (port && port != 0) 
+      config->ServerPort = port;
+
+    blog(LOG_INFO, "starting at port %" PRIu64 "\n", config->ServerPort);
 
     if (config->ServerEnabled)
         WSServer::Instance->Start(config->ServerPort);
