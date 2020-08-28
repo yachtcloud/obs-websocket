@@ -286,6 +286,7 @@ void WSEvents::connectSourceSignals(obs_source_t* source) {
 	signal_handler_connect(sh, "media_previous", OnMediaPrevious, this);
 	signal_handler_connect(sh, "media_started", OnMediaStarted, this);
 	signal_handler_connect(sh, "media_ended", OnMediaEnded, this);
+	signal_handler_connect(sh, "media_stalled", OnMediaStalled, this);
 
 	if (sourceType == OBS_SOURCE_TYPE_SCENE) {
 		signal_handler_connect(sh, "reorder", OnSceneReordered, this);
@@ -344,6 +345,7 @@ void WSEvents::disconnectSourceSignals(obs_source_t* source) {
 	signal_handler_disconnect(sh, "media_previous", OnMediaPrevious, this);
 	signal_handler_disconnect(sh, "media_started", OnMediaStarted, this);
 	signal_handler_disconnect(sh, "media_ended", OnMediaEnded, this);
+	signal_handler_disconnect(sh, "media_stalled", OnMediaStalled, this);
 }
 
 void WSEvents::connectFilterSignals(obs_source_t* filter) {
@@ -1585,6 +1587,27 @@ void WSEvents::OnMediaEnded(void* param, calldata_t* data) {
 	OBSDataAutoRelease fields = getMediaSourceData(data);
 
 	self->broadcastUpdate("MediaEnded", fields);
+}
+
+/**
+ * A media source has stalled while playback.
+ *
+ * Note: These events are emitted by the OBS sources themselves. For example when a live feed doesn't send any data. The behavior depends on the type of media source being used.
+ *
+ * @return {String} `sourceName` Source name
+ * @return {String} `sourceKind` The ID type of the source (Eg. `vlc_source` or `ffmpeg_source`)
+ *
+ * @api events
+ * @name MediaStalled
+ * @category media
+ * @since unreleased
+ */
+void WSEvents::OnMediaStalled(void* param, calldata_t* data) {
+	auto self = reinterpret_cast<WSEvents*>(param);
+
+	OBSDataAutoRelease fields = getMediaSourceData(data);
+
+	self->broadcastUpdate("MediaStalled", fields);
 }
 
 /**

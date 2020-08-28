@@ -144,6 +144,7 @@ private:
 	static void OnMediaPrevious(void* param, calldata_t* data);
 	static void OnMediaStarted(void* param, calldata_t* data);
 	static void OnMediaEnded(void* param, calldata_t* data);
+	static void OnMediaStalled(void* param, calldata_t* data);
 
 	static void OnSceneReordered(void* param, calldata_t* data);
 	static void OnSceneItemAdd(void* param, calldata_t* data);
